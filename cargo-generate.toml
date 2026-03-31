@@ -1,0 +1,44 @@
+[template]
+cargo_generate_version = ">=0.16.0"
+ignore = [".git/", "target/", "Cargo.lock"]
+
+
+# Your existing MCU prompt for Cargo.toml
+[placeholders.mcu]
+type = "string"
+prompt = "Which STM32 chip are you targeting? (e.g., stm32f413zh)"
+default = "stm32f413zh"
+
+[placeholders.use_defmt]
+type = "bool"
+prompt = "Do you want to include defmt for logging?"
+default = true
+
+
+# The new prompt for probe-rs
+[placeholders.probe_chip]
+type = "string"
+prompt = "What is the EXACT chip name for probe-rs? (e.g., STM32F413ZHTx)"
+default = "STM32F413ZHTx"
+
+
+# The new prompt for the build target
+[placeholders.target]
+type = "string"
+prompt = "What is the Rust target architecture? (e.g., thumbv7em-none-eabihf for Cortex-M4F/M7F)"
+default = "thumbv7em-none-eabihf"
+
+
+[placeholders.use_custom_memory]
+type = "bool"
+prompt = "Do you want to write a custom memory.x file? (Select 'false' to automatically use embassy's memory-x feature)"
+default = false
+
+# If 'true', we ask for the memory lengths
+[conditional.'use_custom_memory == true'.placeholders]
+flash_length = { type = "string", prompt = "What is the total Flash size? (e.g., 512K)", default = "512K" }
+ram_length = { type = "string", prompt = "What is the total RAM size? (e.g., 128K)", default = "128K" }
+
+# If 'false', we completely exclude the file from being generated
+[conditional.'use_custom_memory == false']
+ignore = ["memory.x.liquid"]
